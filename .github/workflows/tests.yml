@@ -31,6 +31,7 @@ jobs:
       - name: Debug
         run: cargo pkgid
       - name: Check root crate version is semver
+        shell: bash
         run: |
           if ! [[ "${{ steps.get-version-root-crate.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Root crate version is not semver: ${{ steps.get-version-root-crate.outputs.version }}"
@@ -38,6 +39,7 @@ jobs:
           fi
           echo "Root crate version is semver: ${{ steps.get-version-root-crate.outputs.version }}"
       - name: Check subdirectory crate version is semver
+        shell: bash
         run: |
           if ! [[ "${{ steps.get-version-subdirectory-crate.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Subdirectory crate version is not semver: ${{ steps.get-version-subdirectory-crate.outputs.version }}"
@@ -45,6 +47,7 @@ jobs:
           fi
           echo "Subdirectory crate version is semver: ${{ steps.get-version-subdirectory-crate.outputs.version }}"
       - name: Check versions match
+        shell: bash
         run: |
           if [ "${{ steps.get-version-root-crate.outputs.version }}" != "${{ steps.get-version-subdirectory-crate.outputs.version }}" ]; then
             echo "Version mismatch: root crate version is ${{ steps.get-version-root-crate.outputs.version }} but subdirectory crate version is ${{ steps.get-version-subdirectory-crate.outputs.version }}"

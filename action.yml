@@ -22,7 +22,11 @@ runs:
       # But always is true that, if contains '@', the version is the second part
       # of a '@' split; and if not, the version is the second part of a '#' split.
       run: |
-        id=$(cargo pkgid)
+        if [[ -n "${{ inputs.working-directory }}" ]]; then
+          cd "${{ inputs.working-directory }}"
+        fi
+
+        id="$(cargo pkgid)"
         if [[ "$id" == *"@"* ]]; then
           version=$(echo $id | cut -d '@' -f2)
         else if [[ "$id" == *"#"* ]]; then
