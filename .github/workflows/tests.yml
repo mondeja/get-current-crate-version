@@ -6,13 +6,11 @@ on:
   pull_request:
 
 jobs:
-  matrix:
-    fail-fast: false
+  test:
     strategy:
+      fail-fast: false
       matrix:
         runs-on: [ubuntu-latest, macos-latest, windows-latest]
-
-  test:
     name: Test (${{ matrix.runs-on }})
     runs-on: ${{ matrix.runs-on }}
     steps:
