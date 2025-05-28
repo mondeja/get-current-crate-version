@@ -28,6 +28,8 @@ jobs:
         uses: mondeja/get-current-crate-version@tests
         with:
           working-directory: docref
+      - name: Debug
+        run: cargo pkgid
       - name: Check root crate version is semver
         run: |
           if ! [[ "${{ steps.get-version-root-crate.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
