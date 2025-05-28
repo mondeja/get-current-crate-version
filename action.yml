@@ -16,24 +16,23 @@ runs:
     - name: Get version
       id: get-version
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       # The output of `cargo pkgid` differs between different specs:
       # See https://doc.rust-lang.org/cargo/commands/cargo-pkgid.html
       #
       # But always is true that, if contains '@', the version is the second part
       # of a '@' split; and if not, the version is the second part of a '#' split.
       run: |
-        if [[ -n "${{ inputs.working-directory }}" ]]; then
-          cd "${{ inputs.working-directory }}"
-        fi
-
         id="$(cargo pkgid)"
-        if [[ "$id" == *"@"* ]]; then
-          version=$(echo $id | cut -d '@' -f2)
-        else if [[ "$id" == *"#"* ]]; then
-          version=$(echo $id | cut -d '#' -f2)
+        if [[ "$id" == *'@'* ]]; then
+          version=$(echo "$id" | cut -d '@' -f2)
+        elif [[ "$id" == *'#'* ]]; then
+          version=$(echo "$id" | cut -d '#' -f2)
+        elif [[ -z "$id" ]]; then
+          echo "Error: \`cargo pkgid\` output is empty. Ensure that you're inside a crate." >&2
+          exit 1
         else
           echo "Error: Unable to determine version from cargo pkgid output: $id" >&2
           exit 1
         fi
         echo "version=$version" >> $GITHUB_OUTPUT
-      working-directory: ${{ inputs.working-directory }}
