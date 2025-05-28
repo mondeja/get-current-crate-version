@@ -1,0 +1,14 @@
+name: 'Get current crate version'
+description: 'Get the version of the current Rust crate using cargo.'
+outputs:
+  version:
+    description: Version of the crate
+    value: ${{ steps.get-version.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get version
+      id: get-version
+      shell: bash
+      run: echo "version=$(cargo pkgid | cut -d "#" -f2)" >> $GITHUB_OUTPUT
