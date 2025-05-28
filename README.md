@@ -1,6 +1,8 @@
-# Get current crate version in GitHub Actions
+# get-current-crate-version
 
-Get the version of the current crate in a GitHub Actions workflow.
+[![Tests](https://img.shields.io/github/actions/workflow/status/mondeja/get-current-crate-version/tests.yml?label=tests&logo=github)](https://github.com/mondeja/get-current-crate-version/actions)
+
+Get the version of the current Rust crate in a GitHub Actions workflow.
 
 ## Usage
 
