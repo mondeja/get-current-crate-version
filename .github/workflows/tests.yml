@@ -22,10 +22,10 @@ jobs:
           repository: 'mondeja/cucumber-thirtyfour-worlder'
       - name: Get version from root crate
         id: get-version-root-crate
-        uses: mondeja/get-current-crate-version@tests
+        uses: mondeja/get-current-crate-version@main
       - name: Get version from subdirectory crate
         id: get-version-subdirectory-crate
-        uses: mondeja/get-current-crate-version@tests
+        uses: mondeja/get-current-crate-version@main
         with:
           working-directory: docref
       - name: Debug
