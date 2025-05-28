@@ -30,7 +30,8 @@ jobs:
       - name: Get crate version
         id: get-version
         uses: mondeja/get-current-crate-version@main
-        working-directory: path/to/crate
+        with:
+          working-directory: path/to/crate
       - name: Print version
         run: echo "Crate version is ${{ steps.get-version.outputs.version }}"
 ```

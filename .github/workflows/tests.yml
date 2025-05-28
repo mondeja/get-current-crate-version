@@ -1,0 +1,56 @@
+name: Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [ubuntu-latest, macos-latest, windows-latest]
+    name: Test (${{ matrix.runs-on }})
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - name: Checkout root directory
+        uses: actions/checkout@v4
+        with:
+          # Repository with crate in root and crate in subdirectory
+          # whose versions are the same
+          repository: 'mondeja/cucumber-thirtyfour-worlder'
+      - name: Get version from root crate
+        id: get-version-root-crate
+        uses: mondeja/get-current-crate-version@main
+      - name: Get version from subdirectory crate
+        id: get-version-subdirectory-crate
+        uses: mondeja/get-current-crate-version@main
+        with:
+          working-directory: docref
+      - name: Debug
+        run: cargo pkgid
+      - name: Check root crate version is semver
+        shell: bash
+        run: |
+          if ! [[ "${{ steps.get-version-root-crate.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Root crate version is not semver: ${{ steps.get-version-root-crate.outputs.version }}"
+            exit 1
+          fi
+          echo "Root crate version is semver: ${{ steps.get-version-root-crate.outputs.version }}"
+      - name: Check subdirectory crate version is semver
+        shell: bash
+        run: |
+          if ! [[ "${{ steps.get-version-subdirectory-crate.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Subdirectory crate version is not semver: ${{ steps.get-version-subdirectory-crate.outputs.version }}"
+            exit 1
+          fi
+          echo "Subdirectory crate version is semver: ${{ steps.get-version-subdirectory-crate.outputs.version }}"
+      - name: Check versions match
+        shell: bash
+        run: |
+          if [ "${{ steps.get-version-root-crate.outputs.version }}" != "${{ steps.get-version-subdirectory-crate.outputs.version }}" ]; then
+            echo "Version mismatch: root crate version is ${{ steps.get-version-root-crate.outputs.version }} but subdirectory crate version is ${{ steps.get-version-subdirectory-crate.outputs.version }}"
+            exit 1
+          fi
+          echo "Versions match: ${{ steps.get-version-root-crate.outputs.version }}"

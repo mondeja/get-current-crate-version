@@ -4,6 +4,11 @@ outputs:
   version:
     description: Version of the crate
     value: ${{ steps.get-version.outputs.version }}
+inputs:
+  working-directory:
+    description: 'The directory containing the Cargo.toml file. Defaults to the root of the repository.'
+    required: false
+    default: '.'
 
 runs:
   using: composite
@@ -11,4 +16,23 @@ runs:
     - name: Get version
       id: get-version
       shell: bash
-      run: echo "version=$(cargo pkgid | cut -d "#" -f2)" >> $GITHUB_OUTPUT
+      working-directory: ${{ inputs.working-directory }}
+      # The output of `cargo pkgid` differs between different specs:
+      # See https://doc.rust-lang.org/cargo/commands/cargo-pkgid.html
+      #
+      # But always is true that, if contains '@', the version is the second part
+      # of a '@' split; and if not, the version is the second part of a '#' split.
+      run: |
+        id="$(cargo pkgid)"
+        if [[ "$id" == *'@'* ]]; then
+          version=$(echo "$id" | cut -d '@' -f2)
+        elif [[ "$id" == *'#'* ]]; then
+          version=$(echo "$id" | cut -d '#' -f2)
+        elif [[ -z "$id" ]]; then
+          echo "Error: \`cargo pkgid\` output is empty. Ensure that you're inside a crate." >&2
+          exit 1
+        else
+          echo "Error: Unable to determine version from cargo pkgid output: $id" >&2
+          exit 1
+        fi
+        echo "version=$version" >> $GITHUB_OUTPUT
