@@ -4,6 +4,11 @@ outputs:
   version:
     description: Version of the crate
     value: ${{ steps.get-version.outputs.version }}
+inputs:
+  working-directory:
+    description: 'The directory containing the Cargo.toml file. Defaults to the root of the repository.'
+    required: false
+    default: '.'
 
 runs:
   using: composite
@@ -12,3 +17,4 @@ runs:
       id: get-version
       shell: bash
       run: echo "version=$(cargo pkgid | cut -d "#" -f2)" >> $GITHUB_OUTPUT
+      working-directory: ${{ inputs.working-directory }}

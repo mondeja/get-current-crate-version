@@ -26,7 +26,8 @@ jobs:
       - name: Get version from subdirectory crate
         id: get-version-subdirectory-crate
         uses: mondeja/get-current-crate-version@main
-        workdir-directory: docref
+        with:
+          working-directory: docref
       - name: Check root crate version is semver
         run: |
           if ! [[ "${{ steps.get-version-root-crate.outputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
